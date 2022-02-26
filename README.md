@@ -14,5 +14,6 @@ m | set marker | no
 ' | goto marker | no
 i | insert (prepend) | no
 a | insert (append) | no
+Esc | exit insert mode | no
 s | substitute | no
 r | replace | no
