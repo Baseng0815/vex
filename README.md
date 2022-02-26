@@ -1,6 +1,8 @@
 # Vex - a simple ncurses-based hex editor
 ## Feature list
+
 Key | Description | Implemented?
+--- | ----------- | ------------
 hjkl | move left,down,up,right | no
 w | move to next word | no
 b | move to beginning of word | no
