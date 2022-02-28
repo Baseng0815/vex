@@ -7,6 +7,8 @@ hjkl | move left,down,up,right | no
 w | move to next word | no
 b | move to beginning of word | no
 e | move to end of word | no
++ | increase word size | no
+- | decrease word size | no
 g | go to beginning | no
 G | go to end | no
 : | seek offset | no
