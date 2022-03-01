@@ -9,8 +9,8 @@ b | move to beginning of word | yes
 e | move to end of word | yes
 U | move one screen up | yes
 D | move one screen down | yes
-g | go to beginning of file | no
-G | go to end of file | no
+g | go to beginning of file | yes
+G | go to end of file | yes
 0 | go to beginning of line | yes
 $ | go to end of line | yes
 \+ | increase word size | yes
