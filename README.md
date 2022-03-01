@@ -22,4 +22,4 @@ i | insert (prepend) | no
 a | insert (append) | no
 Esc | exit insert mode | no
 s | substitute | no
-r | replace | no
+r | replace | yes

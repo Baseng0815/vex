@@ -2,35 +2,27 @@
 
 #include <stdlib.h>
 #include <ncurses.h>
-#include <math.h>
 
-#define ROUND_DOWN(V,T) ((V) & ~((T) - 1))
+#include "mode_normal.h"
 
-struct vex_state {
-        struct buffer *data;
-        uint64_t offset_data;
-        uint64_t offset_screen;
-        uint8_t word_size; // in bytes (1,2,4,8)
-} state;
+struct vex_state state;
 
 int ty, tx;
 uint64_t screen_bytes;
-bool running = true;
+bool running;
 
 void vex_init(struct buffer*);
-void vex_exit(void);
-void vex_draw(void);
-void vex_loop(void);
-
-void vex_change_offset(int64_t);
-uint8_t vex_data_read(uint64_t);
-void vex_data_write(uint64_t, uint8_t);
+static void vex_exit(void);
+static void vex_draw(void);
+static void vex_loop(void);
 
 void vex_init(struct buffer *data) {
         state.data          = data;
+        state.current_mode  = &mode_normal;
         state.offset_data   = 0;
         state.offset_screen = 0;
         state.word_size     = 1;
+        state.running       = true;
 
         initscr();
         noecho();
@@ -39,6 +31,7 @@ void vex_init(struct buffer *data) {
         getmaxyx(stdscr, ty, tx);
         screen_bytes = 0x10 * (ty - 1);
 
+        running = true;
         vex_loop();
 }
 
@@ -86,51 +79,10 @@ void vex_draw(void)
 
 void vex_loop(void)
 {
-        while (running) {
+        while (state.running) {
                 char c = getch();
-                switch (c) {
-                        case 'q':
-                                running = false;
-                                break;
-                        case 'h':
-                                vex_change_offset(-1);
-                                break;
-                        case 'j':
-                                vex_change_offset(0x10);
-                                break;
-                        case 'k':
-                                vex_change_offset(-0x10);
-                                break;
-                        case 'l':
-                                vex_change_offset(1);
-                                break;
-                        case 'U':
-                                vex_change_offset(-screen_bytes);
-                                break;
-                        case 'D':
-                                vex_change_offset(screen_bytes);
-                                break;
-                        case '0':
-                                state.offset_data =
-                                        ROUND_DOWN(state.offset_data, 0x10);
-                                break;
-                        case '$':
-                                state.offset_data =
-                                        ROUND_DOWN(state.offset_data + 0x10,
-                                                   0x10) - 1;
-                                break;
-                        case '+':
-                                if (state.word_size < 8) {
-                                        state.word_size <<= 1;
-                                }
-                                break;
-                        case '-':
-                                if (state.word_size > 1) {
-                                        state.word_size >>= 1;
-                                }
-                        default:
-                                break;
-                }
+
+                state.current_mode->process_char(c);
 
                 clear();
                 vex_draw();
@@ -164,5 +116,6 @@ void vex_data_write(uint64_t addr, uint8_t val)
 {
         if (addr < state.data->len) {
                 state.data->data[addr] = val;
+                vex_draw();
         }
 }
