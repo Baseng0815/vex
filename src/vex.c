@@ -103,6 +103,11 @@ void vex_change_offset(int64_t delta)
         }
 }
 
+void vex_set_offset(uint64_t offset)
+{
+        vex_change_offset(offset - state.offset_data);
+}
+
 uint8_t vex_data_read(uint64_t addr)
 {
         if (addr < state.data->len) {

@@ -4,9 +4,9 @@
 Key | Description | Implemented?
 --- | ----------- | ------------
 hjkl | move left,down,up,right | yes
-w | move to next word | no
-b | move to beginning of word | no
-e | move to end of word | no
+w | move to next word | yes
+b | move to beginning of word | yes
+e | move to end of word | yes
 U | move one screen up | yes
 D | move one screen down | yes
 g | go to beginning of file | no

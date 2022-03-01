@@ -28,6 +28,27 @@ void process_char(char c)
                 case 'l':
                         vex_change_offset(1);
                         break;
+                case 'w':
+                        vex_set_offset(ROUND_DOWN(state.offset_data +
+                                                  state.word_size,
+                                                  state.word_size));
+                        break;
+                case 'b':
+                        vex_set_offset(ROUND_DOWN(state.offset_data -
+                                                  state.word_size,
+                                                  state.word_size));
+                        break;
+                case 'e':
+                        vex_set_offset(ROUND_DOWN(state.offset_data + 1,
+                                                  state.word_size)
+                                       + state.word_size - 1);
+                        break;
+                case 'g':
+                        vex_set_offset(0);
+                        break;
+                case 'G':
+                        vex_set_offset(state.data->len);
+                        break;
                 case 'U':
                         vex_change_offset(-screen_bytes);
                         break;
@@ -35,13 +56,11 @@ void process_char(char c)
                         vex_change_offset(screen_bytes);
                         break;
                 case '0':
-                        state.offset_data =
-                                ROUND_DOWN(state.offset_data, 0x10);
+                        vex_set_offset(ROUND_DOWN(state.offset_data, 0x10));
                         break;
                 case '$':
-                        state.offset_data =
-                                ROUND_DOWN(state.offset_data + 0x10,
-                                           0x10) - 1;
+                        vex_set_offset(ROUND_DOWN(state.offset_data + 0x10,
+                                                  0x10) - 1);
                         break;
                 case '+':
                         if (state.word_size < 8) {
@@ -65,6 +84,7 @@ void replace(void)
 {
         uint8_t value = vex_data_read(state.offset_data);
 
+        // TODO take word size into account (replace whole words)
         uint8_t v = read_nibble();
         value &= 0x0f;
         value |= (v << 4);
