@@ -3,7 +3,7 @@
 
 Key | Description | Implemented?
 --- | ----------- | ------------
-hjkl | move left,down,up,right | no
+hjkl | move left,down,up,right | yes
 w | move to next word | no
 b | move to beginning of word | no
 e | move to end of word | no
@@ -11,6 +11,8 @@ e | move to end of word | no
 \- | decrease word size | no
 g | go to beginning | no
 G | go to end | no
+0 | go to beginning of line | no
+^ | go to end of line | no
 : | seek offset | no
 m | set marker | no
 ' | goto marker | no
