@@ -2,6 +2,8 @@
 
 #include "vex.h"
 
+#include <ncurses.h>
+
 static void replace(void);
 
 static void process_char(char c);
@@ -72,6 +74,19 @@ void process_char(char c)
                                 state.word_size >>= 1;
                         }
                         break;
+                case 'm': {
+                        char c = getch();
+                        state.marks[(size_t)c] = state.offset_data;
+                        break;
+                }
+                case '\'': {
+                        char c = getch();
+                        uint64_t addr = state.marks[(size_t)c];
+                        if (addr) {
+                                vex_set_offset(addr);
+                        }
+                        break;
+                }
                 case 'r':
                         replace();
                         break;

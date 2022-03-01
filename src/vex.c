@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <ncurses.h>
+#include <string.h>
 
 #include "mode_normal.h"
 
@@ -22,6 +23,7 @@ void vex_init(struct buffer *data) {
         state.offset_data   = 0;
         state.offset_screen = 0;
         state.word_size     = 1;
+        memset(state.marks, 0, sizeof(state.marks));
         state.running       = true;
 
         initscr();
