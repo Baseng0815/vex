@@ -16,8 +16,8 @@ $ | go to end of line | yes
 \+ | increase word size | yes
 \- | decrease word size | yes
 : | seek offset | no
-m | set marker | no
-' | goto marker | no
+m | set marker | yes
+' | goto marker | yes
 i | insert (prepend) | no
 a | insert (append) | no
 Esc | exit insert mode | no
