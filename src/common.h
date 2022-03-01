@@ -21,7 +21,7 @@ struct vex_state {
         struct mode *current_mode;
         uint64_t offset_data;
         uint64_t offset_screen;
-        uint8_t word_size; // in bytes (1,2,4,8)
+        uint8_t word_size; // in bytes (1,2,4,8,16)
         uint64_t marks[256];
         bool running;
 };

@@ -27,6 +27,10 @@ void vex_init(struct buffer *data) {
         state.running       = true;
 
         initscr();
+        start_color();
+        use_default_colors();
+        init_pair(1, COLOR_CYAN, -1);
+
         noecho();
         keypad(stdscr, true);
 
@@ -34,18 +38,22 @@ void vex_init(struct buffer *data) {
         screen_bytes = 0x10 * (ty - 1);
 
         running = true;
+        vex_draw();
+        refresh();
+
         vex_loop();
 }
 
 void vex_exit(void)
 {
         endwin();
+
+        // TODO replace with save
         free(state.data->data);
 }
 
 void vex_draw(void)
 {
-
         char buf[24];
 
         sprintf(buf, "one word = %d bytes", state.word_size);
@@ -64,7 +72,14 @@ void vex_draw(void)
                 for (int bytei = 0; bytei < 16; bytei++) {
                         uint64_t addr = row_addr + bytei;
                         sprintf(buf, "%02x", vex_data_read(addr));
+                        if (bytei & 1) {
+                                attron(COLOR_PAIR(1));
+                        }
                         mvprintw(1 + y, cx, buf);
+                        if (bytei & 1) {
+                                attroff(COLOR_PAIR(1));
+                        }
+
                         cx += 2;
                         if ((bytei + 1) % state.word_size == 0) {
                                 cx++;

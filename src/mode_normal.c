@@ -65,7 +65,7 @@ void process_char(char c)
                                                   0x10) - 1);
                         break;
                 case '+':
-                        if (state.word_size < 8) {
+                        if (state.word_size < 16) {
                                 state.word_size <<= 1;
                         }
                         break;
