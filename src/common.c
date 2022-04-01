@@ -1,7 +1,15 @@
 #include "common.h"
 
+#include "vex.h"
+
 #include <ncurses.h>
 #include <ctype.h>
+
+uint64_t apply_byte_ordering(uint64_t addr)
+{
+        return (addr & ~(state.word_size - 1)) +
+                (state.word_size - addr % state.word_size - 1);
+}
 
 bool is_hexit(char c)
 {

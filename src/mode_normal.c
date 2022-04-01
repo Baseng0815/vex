@@ -31,17 +31,17 @@ void process_char(char c)
                         vex_change_offset(1);
                         break;
                 case 'w':
-                        vex_set_offset(ROUND_DOWN(state.offset_data +
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor +
                                                   state.word_size,
                                                   state.word_size));
                         break;
                 case 'b':
-                        vex_set_offset(ROUND_DOWN(state.offset_data -
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor -
                                                   state.word_size,
                                                   state.word_size));
                         break;
                 case 'e':
-                        vex_set_offset(ROUND_DOWN(state.offset_data + 1,
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor + 1,
                                                   state.word_size)
                                        + state.word_size - 1);
                         break;
@@ -58,10 +58,10 @@ void process_char(char c)
                         vex_change_offset(screen_bytes);
                         break;
                 case '0':
-                        vex_set_offset(ROUND_DOWN(state.offset_data, 0x10));
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor, 0x10));
                         break;
                 case '$':
-                        vex_set_offset(ROUND_DOWN(state.offset_data + 0x10,
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor + 0x10,
                                                   0x10) - 1);
                         break;
                 case '+':
@@ -76,7 +76,7 @@ void process_char(char c)
                         break;
                 case 'm': {
                         char c = getch();
-                        state.marks[(size_t)c] = state.offset_data;
+                        state.marks[(size_t)c] = state.offset_cursor;
                         break;
                 }
                 case '\'': {
@@ -97,16 +97,17 @@ void process_char(char c)
 
 void replace(void)
 {
-        uint8_t value = vex_data_read(state.offset_data);
+        uint64_t addr = apply_byte_ordering(state.offset_cursor);
+        uint8_t value = vex_data_read(addr);
 
         // TODO take word size into account (replace whole words)
         uint8_t v = read_nibble();
         value &= 0x0f;
         value |= (v << 4);
-        vex_data_write(state.offset_data, value);
+        vex_data_write(addr, value);
 
         v = read_nibble();
         value &= 0xf0;
         value |= (v << 0);
-        vex_data_write(state.offset_data, value);
+        vex_data_write(addr, value);
 }

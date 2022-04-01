@@ -20,7 +20,7 @@ static void vex_loop(void);
 void vex_init(struct buffer *data) {
         state.data          = data;
         state.current_mode  = &mode_normal;
-        state.offset_data   = 0;
+        state.offset_cursor   = 0;
         state.offset_screen = 0;
         state.word_size     = 1;
         memset(state.marks, 0, sizeof(state.marks));
@@ -70,8 +70,7 @@ void vex_draw(void)
                 mvprintw(1 + y, 0, buf);
                 int cx = 24;
                 for (int bytei = 0; bytei < 16; bytei++) {
-                        uint64_t addr = row_addr + bytei;
-                        addr = (addr & ~(state.word_size - 1)) + (state.word_size - addr % state.word_size);
+                        uint64_t addr = apply_byte_ordering(row_addr + bytei);
                         sprintf(buf, "%02x", vex_data_read(addr));
                         if (bytei & 1) {
                                 attron(COLOR_PAIR(1));
@@ -88,7 +87,7 @@ void vex_draw(void)
                 }
         }
 
-        uint64_t relative_screen_addr = state.offset_data - state.offset_screen;
+        uint64_t relative_screen_addr = state.offset_cursor - state.offset_screen;
         int cy = 1 + relative_screen_addr / 0x10;
         uint8_t bytei = relative_screen_addr & 0xf;
         int cx = 24 + 2 * bytei + bytei / state.word_size;
@@ -112,18 +111,18 @@ void vex_loop(void)
 
 void vex_change_offset(int64_t delta)
 {
-        state.offset_data += delta;
-        if (state.offset_data < state.offset_screen) {
-                state.offset_screen = ROUND_DOWN(state.offset_data, 0x10);
-        } else if (state.offset_data >= state.offset_screen + screen_bytes) {
-                uint64_t top = ROUND_DOWN(state.offset_data, 0x10);
+        state.offset_cursor += delta;
+        if (state.offset_cursor < state.offset_screen) {
+                state.offset_screen = ROUND_DOWN(state.offset_cursor, 0x10);
+        } else if (state.offset_cursor >= state.offset_screen + screen_bytes) {
+                uint64_t top = ROUND_DOWN(state.offset_cursor, 0x10);
                 state.offset_screen = top - screen_bytes + 0x10;
         }
 }
 
 void vex_set_offset(uint64_t offset)
 {
-        vex_change_offset(offset - state.offset_data);
+        vex_change_offset(offset - state.offset_cursor);
 }
 
 uint8_t vex_data_read(uint64_t addr)
