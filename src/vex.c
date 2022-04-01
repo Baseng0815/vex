@@ -61,7 +61,7 @@ void vex_draw(void)
 
         for (int bytei = 0; bytei < 16; bytei += state.word_size) {
                 sprintf(buf, "%02x ", bytei);
-                mvprintw(0, 24 + 2 * bytei + bytei / state.word_size, buf);
+                mvprintw(0, 22 + 2 * (bytei + state.word_size) + bytei / state.word_size, buf);
         }
 
         for (int y = 0; y < ty - 1; y++) {
@@ -71,6 +71,7 @@ void vex_draw(void)
                 int cx = 24;
                 for (int bytei = 0; bytei < 16; bytei++) {
                         uint64_t addr = row_addr + bytei;
+                        addr = (addr & ~(state.word_size - 1)) + (state.word_size - addr % state.word_size);
                         sprintf(buf, "%02x", vex_data_read(addr));
                         if (bytei & 1) {
                                 attron(COLOR_PAIR(1));
