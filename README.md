@@ -1,5 +1,15 @@
 # Vex - a simple ncurses-based hex editor
-## Feature list
+
+![](./vex.png)
+
+## Build instructions
+
+Vex uses the meson/ninja build system and depends on ncurses. Simply create
+your release build directory using `meson --buildtype release build`, enter
+the build directory and run `meson compile`. You should now have a freshly
+built executable which you can run directly or install using `meson install`.
+
+## Keybind list
 
 Key | Description | Implemented?
 --- | ----------- | ------------
