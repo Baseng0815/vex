@@ -20,10 +20,11 @@ static void vex_loop(void);
 void vex_init(struct buffer *data) {
         state.data          = data;
         state.current_mode  = &mode_normal;
-        state.offset_cursor   = 0;
+        state.offset_cursor = 0;
         state.offset_screen = 0;
         state.word_size     = 1;
-        memset(state.marks, 0, sizeof(state.marks));
+        memset(state.mark_cursoroff, 0, sizeof(state.mark_cursoroff));
+        memset(state.mark_screenoff, 0, sizeof(state.mark_screenoff));
         state.running       = true;
 
         initscr();

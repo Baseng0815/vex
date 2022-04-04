@@ -79,15 +79,14 @@ void process_char(int c)
                         break;
                 case 'm': {
                         char c = getch();
-                        state.marks[(size_t)c] = state.offset_cursor;
+                        state.mark_cursoroff[(size_t)c] = state.offset_cursor;
+                        state.mark_screenoff[(size_t)c] = state.offset_screen;
                         break;
                 }
                 case '\'': {
                         char c = getch();
-                        uint64_t addr = state.marks[(size_t)c];
-                        if (addr) {
-                                vex_set_offset(addr);
-                        }
+                        state.offset_cursor = state.mark_cursoroff[(size_t)c];
+                        state.offset_screen = state.mark_screenoff[(size_t)c];
                         break;
                 }
                 case 'r':

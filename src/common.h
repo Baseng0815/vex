@@ -22,7 +22,8 @@ struct vex_state {
         uint64_t offset_cursor;
         uint64_t offset_screen;
         uint8_t word_size; // in bytes (1,2,4,8,16)
-        uint64_t marks[256];
+        uint64_t mark_cursoroff[256];
+        uint64_t mark_screenoff[256];
         bool running;
 };
 
