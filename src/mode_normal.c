@@ -6,27 +6,31 @@
 
 static void replace(void);
 
-static void process_char(char c);
+static void process_char(int c);
 
 struct mode mode_normal = {
-        .process_char = process_char
+        .process_input = process_char
 };
 
-void process_char(char c)
+void process_char(int c)
 {
         switch (c) {
                 case 'q':
                         state.running = false;
                         break;
+                case KEY_LEFT:
                 case 'h':
                         vex_change_offset(-1);
                         break;
+                case KEY_DOWN:
                 case 'j':
                         vex_change_offset(0x10);
                         break;
+                case KEY_UP:
                 case 'k':
                         vex_change_offset(-0x10);
                         break;
+                case KEY_RIGHT:
                 case 'l':
                         vex_change_offset(1);
                         break;

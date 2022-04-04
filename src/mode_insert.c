@@ -2,13 +2,13 @@
 
 #include "vex.h"
 
-static void process_char(char c);
+static void process_input(int c);
 
 struct mode mode_insert = {
-        .process_char = process_char
+        .process_input = process_input
 };
 
-void process_char(char c)
+void process_input(int c)
 {
         c++;
 }

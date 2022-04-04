@@ -113,9 +113,9 @@ void vex_draw(void)
 void vex_loop(void)
 {
         while (state.running) {
-                char c = getch();
+                int c = getch();
 
-                state.current_mode->process_char(c);
+                state.current_mode->process_input(c);
 
                 clear();
                 vex_draw();

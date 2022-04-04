@@ -13,7 +13,7 @@ struct buffer {
 };
 
 struct mode {
-        void (*process_char)(char);
+        void (*process_input)(int);
 };
 
 struct vex_state {
