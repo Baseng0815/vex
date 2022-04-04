@@ -57,7 +57,7 @@ void vex_draw(void)
 {
         char buf[24];
 
-        sprintf(buf, "one word = %d bytes", state.word_size);
+        sprintf(buf, "one word = %-2dbytes", state.word_size);
         mvprintw(0, 0, buf);
 
         /* header */
