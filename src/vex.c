@@ -30,6 +30,7 @@ void vex_init(struct buffer *data) {
         start_color();
         use_default_colors();
         init_pair(1, COLOR_CYAN, -1);
+        init_pair(2, COLOR_BLACK, COLOR_WHITE);
 
         noecho();
         keypad(stdscr, true);
@@ -59,6 +60,7 @@ void vex_draw(void)
         sprintf(buf, "one word = %d bytes", state.word_size);
         mvprintw(0, 0, buf);
 
+        /* header */
         for (int bytei = 0; bytei < 16; bytei += state.word_size) {
                 sprintf(buf, "%02x ", bytei);
                 mvprintw(0, 22 + 2 * (bytei + state.word_size) + bytei / state.word_size, buf);
@@ -71,7 +73,9 @@ void vex_draw(void)
                 int cx = 24;
                 for (int bytei = 0; bytei < 16; bytei++) {
                         uint64_t addr = apply_byte_ordering(row_addr + bytei);
-                        sprintf(buf, "%02x", vex_data_read(addr));
+                        uint8_t value = vex_data_read(addr);
+                        /* numeric values */
+                        sprintf(buf, "%02x", value);
                         if (bytei & 1) {
                                 attron(COLOR_PAIR(1));
                         }
@@ -83,6 +87,18 @@ void vex_draw(void)
                         cx += 2;
                         if ((bytei + 1) % state.word_size == 0) {
                                 cx++;
+                        }
+
+                        /* ascii values */
+                        uint64_t ca = apply_byte_ordering(state.offset_cursor);
+                        if (ca == addr) {
+                                attron(COLOR_PAIR(2));
+                        }
+                        mvaddch(1 + y,
+                                24 + 33 + (16 / state.word_size - 1) + bytei,
+                                to_ascii(value));
+                        if (ca == addr) {
+                                attroff(COLOR_PAIR(2));
                         }
                 }
         }

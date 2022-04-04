@@ -36,8 +36,7 @@ void process_char(char c)
                                                   state.word_size));
                         break;
                 case 'b':
-                        vex_set_offset(ROUND_DOWN(state.offset_cursor -
-                                                  state.word_size,
+                        vex_set_offset(ROUND_DOWN(state.offset_cursor - 1,
                                                   state.word_size));
                         break;
                 case 'e':

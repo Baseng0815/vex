@@ -32,6 +32,7 @@ uint64_t apply_byte_ordering(uint64_t);
 
 bool is_hexit(char);
 uint8_t hexit_to_int(char);
+char to_ascii(uint8_t byte);
 
 /* read one hex digit from user input and return the corresponding nibble
  * blocks until a valid hex digit is read */
