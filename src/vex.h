@@ -12,6 +12,8 @@ void vex_set_offset(uint64_t);
 uint8_t vex_data_read(uint64_t);
 void vex_data_write(uint64_t, uint8_t);
 
+void vex_update_custom_status(const char*);
+
 void vex_init(struct buffer*);
 
 #endif

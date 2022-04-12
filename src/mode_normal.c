@@ -5,6 +5,7 @@
 #include <ncurses.h>
 
 static void replace(void);
+static void seek(void);
 
 static void process_char(int c);
 
@@ -92,6 +93,9 @@ void process_char(int c)
                 case 'r':
                         replace();
                         break;
+                case ':':
+                        seek();
+                        break;
                 default:
                         break;
         }
@@ -112,4 +116,10 @@ void replace(void)
         value &= 0xf0;
         value |= (v << 0);
         vex_data_write(addr, value);
+}
+
+void seek(void)
+{
+        uint64_t target = prompt_number();
+        vex_set_offset(target);
 }

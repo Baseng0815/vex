@@ -10,11 +10,13 @@ struct vex_state state;
 
 int ty, tx;
 uint64_t screen_bytes;
-bool running;
+
+static const char *status_override = NULL;
 
 void vex_init(struct buffer*);
 static void vex_exit(void);
-static void vex_draw(void);
+static void vex_redraw_status(void);
+static void vex_redraw_all(void);
 static void vex_loop(void);
 
 void vex_init(struct buffer *data) {
@@ -39,8 +41,7 @@ void vex_init(struct buffer *data) {
         getmaxyx(stdscr, ty, tx);
         screen_bytes = 0x10 * (ty - 1);
 
-        running = true;
-        vex_draw();
+        vex_redraw_all();
         refresh();
 
         vex_loop();
@@ -48,25 +49,49 @@ void vex_init(struct buffer *data) {
 
 void vex_exit(void)
 {
-        endwin();
+        // TODO replace with save/quit prompt
 
-        // TODO replace with save
+        endwin();
         free(state.data->data);
 }
 
-void vex_draw(void)
+void vex_redraw_status(void)
 {
+        // clear
+        int py, px;
+        getyx(stdscr, py, px);
+
+        move(0, 0);
+        clrtoeol();
+        move(py, px);
+
         char buf[24];
+        if (status_override == NULL) {
+                sprintf(buf, "one word = %-2dbytes", state.word_size);
+                mvprintw(0, 0, buf);
+        } else {
+                mvprintw(0, 0, status_override);
+        }
 
-        sprintf(buf, "one word = %-2dbytes", state.word_size);
-        mvprintw(0, 0, buf);
+        refresh();
+}
 
-        /* header */
+void vex_redraw_all(void)
+{
+        clear();
+
+        char buf[32];
+
+        // status
+        vex_redraw_status();
+
+        // header
         for (int bytei = 0; bytei < 16; bytei += state.word_size) {
                 sprintf(buf, "%02x ", bytei);
                 mvprintw(0, 22 + 2 * (bytei + state.word_size) + bytei / state.word_size, buf);
         }
 
+        // data
         for (int y = 0; y < ty - 1; y++) {
                 uint64_t row_addr = state.offset_screen + 0x10 * y;
                 sprintf(buf, "0x%016lx", row_addr);
@@ -97,18 +122,21 @@ void vex_draw(void)
                         }
                         mvaddch(1 + y,
                                 24 + 33 + (16 / state.word_size - 1) + bytei,
-                                to_ascii(value));
+                                byte_to_ascii(value));
                         if (ca == addr) {
                                 attroff(COLOR_PAIR(2));
                         }
                 }
         }
 
+        // set cursor position
         uint64_t relative_screen_addr = state.offset_cursor - state.offset_screen;
         int cy = 1 + relative_screen_addr / 0x10;
         uint8_t bytei = relative_screen_addr & 0xf;
         int cx = 24 + 2 * bytei + bytei / state.word_size;
         move(cy, cx);
+
+        refresh();
 }
 
 void vex_loop(void)
@@ -118,9 +146,7 @@ void vex_loop(void)
 
                 state.current_mode->process_input(c);
 
-                clear();
-                vex_draw();
-                refresh();
+                vex_redraw_all();
         }
 
         vex_exit();
@@ -155,6 +181,12 @@ void vex_data_write(uint64_t addr, uint8_t val)
 {
         if (addr < state.data->len) {
                 state.data->data[addr] = val;
-                vex_draw();
+                vex_redraw_all();
         }
+}
+
+void vex_update_custom_status(const char *status)
+{
+        status_override = status;
+        vex_redraw_status();
 }

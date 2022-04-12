@@ -25,7 +25,7 @@ G | go to end of file | yes
 $ | go to end of line | yes
 \+ | increase word size | yes
 \- | decrease word size | yes
-: | seek offset | no
+: | seek offset | yes
 m | set marker | yes
 ' | goto marker | yes
 i | insert (prepend) | no

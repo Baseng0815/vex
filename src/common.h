@@ -33,10 +33,15 @@ uint64_t apply_byte_ordering(uint64_t);
 
 bool is_hexit(char);
 uint8_t hexit_to_int(char);
-char to_ascii(uint8_t byte);
+char byte_to_ascii(uint8_t byte);
 
 /* read one hex digit from user input and return the corresponding nibble
  * blocks until a valid hex digit is read */
 uint8_t read_nibble(void);
+
+/* read a number from user input and return the corresponding value
+ * blocks until a valid number is read and allows base 2, 8, 10 and 16 input
+ * also displays the input in the status bar */
+uint64_t prompt_number(void);
 
 #endif

@@ -4,6 +4,8 @@
 
 #include <ncurses.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <errno.h>
 
 uint64_t apply_byte_ordering(uint64_t addr)
 {
@@ -16,7 +18,7 @@ bool is_hexit(char c)
         return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f');
 }
 
-char to_ascii(uint8_t byte)
+char byte_to_ascii(uint8_t byte)
 {
         if (byte < '!' || byte > '~') {
                 return '.';
@@ -43,4 +45,50 @@ uint8_t read_nibble(void)
         }
 
         return hexit_to_int(c1);
+}
+
+uint64_t prompt_number(void)
+{
+        char buf[67] = { '\0' };
+
+        uint64_t result;
+        do {
+                errno = 0;
+                size_t i = 0;
+                int c;
+                while (i < 66) {
+                        c = getch();
+                        if (c == KEY_BACKSPACE || c == KEY_DC) {
+                                if (i > 0) {
+                                        buf[--i] = '\0';
+                                }
+                        } else if (c == KEY_ENTER || c == 0x0a) {
+                                break;
+                        } else {
+                                buf[i++] = c;
+                        }
+
+                        vex_update_custom_status(buf);
+                }
+
+                switch (buf[1]) {
+                        case 'x':
+                                result = strtol(buf + 2, NULL, 16);
+                                break;
+                        case 'o':
+                                result = strtol(buf + 2, NULL, 8);
+                                break;
+                        case 'b':
+                                result = strtol(buf + 2, NULL, 2);
+                                break;
+                        default:
+                                result = strtol(buf, NULL, 10);
+                                break;
+                }
+
+        } while (errno != 0);
+
+        vex_update_custom_status(NULL);
+
+        return result;
 }
