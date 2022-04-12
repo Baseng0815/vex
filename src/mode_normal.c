@@ -55,10 +55,10 @@ void process_char(int c)
                 case 'G':
                         vex_set_offset(state.data->len);
                         break;
-                case 'U':
+                case 'K':
                         vex_change_offset(-screen_bytes);
                         break;
-                case 'D':
+                case 'J':
                         vex_change_offset(screen_bytes);
                         break;
                 case '0':
