@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
         struct buffer data;
         file_read(&data, argv[1]);
-        vex_init(&data);
+        vex_init(&data, argv[1]);
 
         return 0;
 }

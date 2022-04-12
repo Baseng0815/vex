@@ -3,9 +3,12 @@
 #include "vex.h"
 
 #include <ncurses.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 static void replace(void);
 static void seek(void);
+static void quit(void);
 
 static void process_char(int c);
 
@@ -16,9 +19,6 @@ struct mode mode_normal = {
 void process_char(int c)
 {
         switch (c) {
-                case 'q':
-                        state.running = false;
-                        break;
                 case KEY_LEFT:
                 case 'h':
                         vex_change_offset(-1);
@@ -96,6 +96,8 @@ void process_char(int c)
                 case ':':
                         seek();
                         break;
+                case 'q':
+                        quit();
                 default:
                         break;
         }
@@ -122,4 +124,32 @@ void seek(void)
 {
         uint64_t target = prompt_number();
         vex_set_offset(target);
+}
+
+void quit(void)
+{
+        vex_update_custom_status("(w)rite/(q)uit/(a)bort");
+        char c = '\0';
+        while (c != 'a') {
+                c = getch();
+                switch (c) {
+                        case 'w': {
+                                FILE *filp = fopen(file_path, "w");
+                                if (!filp) {
+                                        fprintf(stderr, "couldn't open file for saving\n");
+                                        exit(1);
+                                }
+                                fwrite(state.data->data, 1, state.data->len, filp);
+                                state.running = false;
+                                return;
+                        }
+                        case 'q':
+                                state.running = false;
+                                return;
+                        default:
+                                continue;
+                }
+        }
+
+        vex_update_custom_status(NULL);
 }

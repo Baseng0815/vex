@@ -10,16 +10,17 @@ struct vex_state state;
 
 int ty, tx;
 uint64_t screen_bytes;
+const char *file_path;
 
 static const char *status_override = NULL;
 
-void vex_init(struct buffer*);
+void vex_init(struct buffer*, const char*);
 static void vex_exit(void);
 static void vex_redraw_status(void);
 static void vex_redraw_all(void);
 static void vex_loop(void);
 
-void vex_init(struct buffer *data) {
+void vex_init(struct buffer *data, const char *file) {
         state.data          = data;
         state.current_mode  = &mode_normal;
         state.offset_cursor = 0;
@@ -28,6 +29,8 @@ void vex_init(struct buffer *data) {
         memset(state.mark_cursoroff, 0, sizeof(state.mark_cursoroff));
         memset(state.mark_screenoff, 0, sizeof(state.mark_screenoff));
         state.running       = true;
+
+        file_path = file;
 
         initscr();
         start_color();
