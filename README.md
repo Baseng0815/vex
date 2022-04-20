@@ -33,3 +33,4 @@ a | insert (append) | no
 Esc | exit insert mode | no
 s | substitute | no
 r | replace | yes
+q | quit/save | yes
