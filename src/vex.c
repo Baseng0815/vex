@@ -68,12 +68,10 @@ void vex_redraw_status(void)
         clrtoeol();
         move(py, px);
 
-        char buf[24];
         if (status_override == NULL) {
-                sprintf(buf, "one word = %-2dbytes", state.word_size);
-                mvprintw(0, 0, (const char*)buf);
+                mvprintw(0, 0, "one word = %-2dbytes", state.word_size);
         } else {
-                mvprintw(0, 0, status_override);
+                mvprintw(0, 0, "%s", status_override);
         }
 
         refresh();
@@ -83,32 +81,29 @@ void vex_redraw_all(void)
 {
         clear();
 
-        char buf[32];
-
         // status
         vex_redraw_status();
 
         // header
         for (int bytei = 0; bytei < 16; bytei += state.word_size) {
-                sprintf(buf, "%02x ", bytei);
-                mvprintw(0, 22 + 2 * (bytei + state.word_size) + bytei / state.word_size, (const char*)buf);
+                mvprintw(0,
+                         22 + 2 * (bytei + state.word_size) + bytei / state.word_size,
+                         "%02x ", bytei);
         }
 
         // data
         for (int y = 0; y < ty - 1; y++) {
                 uint64_t row_addr = state.offset_screen + 0x10 * y;
-                sprintf(buf, "0x%016lx", row_addr);
-                mvprintw(1 + y, 0, (const char*)buf);
+                mvprintw(1 + y, 0, "0x%016lx", row_addr);
                 int cx = 24;
                 for (int bytei = 0; bytei < 16; bytei++) {
                         uint64_t addr = apply_byte_ordering(row_addr + bytei);
                         uint8_t value = vex_data_read(addr);
                         /* numeric values */
-                        sprintf(buf, "%02x", value);
                         if (bytei & 1) {
                                 attron(COLOR_PAIR(1));
                         }
-                        mvprintw(1 + y, cx, (const char*)buf);
+                        mvprintw(1 + y, cx, "%02x", value);
                         if (bytei & 1) {
                                 attroff(COLOR_PAIR(1));
                         }
