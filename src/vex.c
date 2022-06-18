@@ -103,7 +103,7 @@ void vex_redraw_all(void)
                         if (bytei & 1) {
                                 attron(COLOR_PAIR(1));
                         }
-                        mvprintw(1 + y, cx, "%02x", value);
+                        mvprintw(1 + y, cx, "%02hhx", value);
                         if (bytei & 1) {
                                 attroff(COLOR_PAIR(1));
                         }
